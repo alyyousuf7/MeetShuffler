@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Shuffler",
+  "description": "Chrome extension for Google Meet. Shuffle and post list of attendees in random order for your daily stand up order!",
+  "version": "1.0.0",
+  "content_scripts": [
+    {
+      "matches": ["https://meet.google.com/*"],
+      "exclude_matches": ["https://meet.google.com/"],
+      "js": ["controller.js"],
+      "css": ["style.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "permissions": [],
+  "web_accessible_resources": [
+		{
+      "resources": ["images/*.svg"],
+      "matches": ["https://meet.google.com/*"]
+    }
+	]
+}

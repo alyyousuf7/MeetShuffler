@@ -1,0 +1,92 @@
+.shuffler-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+}
+
+.shuffler-button:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	/* we will use an svg mask so we can change the background color */
+	mask-image: url("chrome-extension://__MSG_@@extension_id__/images/logo.svg");
+	mask-position: center center;
+	mask-repeat: no-repeat;
+
+	/* chrome only supports this with vendor prefix */
+	-webkit-mask-image: url("chrome-extension://__MSG_@@extension_id__/images/logo.svg");
+	-webkit-mask-position: center center;
+	-webkit-mask-repeat: no-repeat;
+
+	background-color: white !important;
+}
+
+.shuffler-button[aria-pressed="true"]:after {
+	background: #8ab4f8 !important;
+}
+.shuffler-button.disabled:after {
+	background: #999 !important;
+}
+
+@supports (-moz-appearance: none) {
+	.shuffler-button:after {
+		/* image urls are done differently for firefox */
+		mask-image: url("/images/logo.svg");
+	}
+}
+.shuffler-button:hover:before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: block;
+
+	border-radius: 50%;
+	opacity: var(--mdc-ripple-hover-opacity, 0.04);
+	background-color: var(--mdc-ripple-color, #e8eaed);
+}
+.shuffler-button .tooltip {
+	display: block;
+	position: absolute;
+	left: -7px;
+	bottom: 100%;
+	margin-bottom: 4px;
+
+	font-family: Roboto, Arial, sans-serif;
+	font-size: 0.75rem;
+	font-weight: 400;
+	letter-spacing: 0.0333rem;
+
+	opacity: 0;
+	transform: scale(0.8);
+
+	color: #e8eaed;
+	background-color: #3c4043;
+
+	border-radius: 4px;
+	line-height: 16px;
+	padding: 4px 8px;
+	min-width: 40px;
+	max-width: 200px;
+	min-height: 24px;
+	max-height: 40vh;
+	box-sizing: border-box;
+	overflow: hidden;
+	text-align: center;
+	transform-origin: center bottom;
+	transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1),
+		opacity 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+	transition-delay: 0.5s;
+	will-change: transform, opacity;
+}
+.shuffler-button:not([aria-pressed="true"]):hover .tooltip {
+	transform: scale(1);
+	opacity: 1;
+}
