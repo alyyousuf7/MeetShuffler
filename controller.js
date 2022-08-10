@@ -1,6 +1,7 @@
 // identifier will be posted with the order list, to prevent other with the extension to post their own version of list again
 // this identifier is made with some "hidden" utf-8 characters so they are not visible to human
-const SHUFFLER_IDENTIFIER = '﻿';
+const SHUFFLER_ON_IDENTIFIER = '﻿';
+const SHUFFLER_OFF_IDENTIFIER = '­';
 
 const SELECTORS = {
   toolbar: ".SGP0hd.kunNie",
@@ -65,11 +66,17 @@ function sendMessage(...msg) {
   pressEnter(inputField);
 }
 
-let alreadyShuffledOnce = false;
+let shufflerStartedLocally = false;
 function cmdShuffle() {
-  if (!isExtensionEnabled) return;
-  if (shufflerBtn.classList.contains('disabled')) return;
+  if (shufflerBtn.getAttribute('aria-pressed') === 'true') {
+    stopShuffler();
+  } else {
+    startShuffler();
+  }
+}
 
+function startShuffler() {
+  if (!isExtensionEnabled) return;
   const chatButton = document.querySelectorAll(SELECTORS.panelButtons)[2];
   if (chatButton.getAttribute('aria-pressed') === 'false') {
     chatButton.click();
@@ -81,8 +88,18 @@ function cmdShuffle() {
     ...[...participantsToShuffle].sort(() => Math.random() - 0.5),
   ];
 
-  sendMessage(SHUFFLER_IDENTIFIER, shuffledParticipants.join('\n'));
-  alreadyShuffledOnce = true;
+  sendMessage(SHUFFLER_ON_IDENTIFIER, shuffledParticipants.join('\n'));
+  shufflerStartedLocally = true;
+  shufflerBtn.setAttribute('aria-pressed', 'true');
+}
+
+function stopShuffler() {
+  if (!isExtensionEnabled) return;
+  sendMessage(SHUFFLER_OFF_IDENTIFIER, 'Shuffler Off');
+  shuffledParticipants = [];
+  shuffledOriginator = null;
+  shufflerStartedLocally = false;
+  shufflerBtn.setAttribute('aria-pressed', 'false');
 }
 
 function cmdPick(n) {
@@ -99,15 +116,15 @@ function cmdPick(n) {
 function onParticipantJoined() {
   if (!isExtensionEnabled) return;
 
-  if (alreadyShuffledOnce) {
-    cmdShuffle();
+  if (shufflerStartedLocally) {
+    startShuffler();
   }
 }
 
 function onParticipantLeft() {
   if (shuffledOriginator && !participants.includes(shuffledOriginator)) {
     isExtensionEnabled = true;
-    shufflerBtn.classList.remove('disabled');
+    shufflerBtn.setAttribute('aria-pressed', 'false');
     shuffledOriginator = null;
   }
 }
@@ -132,26 +149,33 @@ function updateParticipants() {
 function onNewMessage(message) {
   if (!isExtensionEnabled) return;
 
-  if (message.author !== 'You' && message.content.startsWith(SHUFFLER_IDENTIFIER)) {
+  if (message.author !== 'You' && message.content.startsWith(SHUFFLER_ON_IDENTIFIER)) {
     isExtensionEnabled = false;
-    shufflerBtn.classList.add('disabled');
+    shufflerBtn.setAttribute('aria-pressed', 'true');
 
     shuffledParticipants = message.content.split('\n');
     shuffledOriginator = message.author;
     return;
   }
 
+  if (message.author !== 'You' && message.content.startsWith(SHUFFLER_OFF_IDENTIFIER)) {
+    isExtensionEnabled = true;
+    shufflerBtn.setAttribute('aria-pressed', 'false');
+
+    shuffledParticipants = [];
+    shuffledOriginator = null;
+    return;
+  }
+
   const msg = message.content.toLowerCase();
   let match;
-  if (msg === '/shuffle') {
-    if (message.author === 'You') {
-      shuffledParticipants = [];
-      cmdShuffle();
-    } else {
-      sendMessage('Sorry, only I can run this command.');
-    }
+  if (message.author === 'You' && (msg === '/shuffler' || msg === '/shuffler on')) {
+    shuffledParticipants = [];
+    startShuffler();
+  } else if (message.author === 'You' && msg === '/shuffler off') {
+    stopShuffler();
   } else if (msg === '/relist') {
-    if (alreadyShuffledOnce) {
+    if (shufflerStartedLocally) {
       sendMessage(shuffledParticipants.join('\n'));
     } else {
       sendMessage('We have not shuffled yet.');
@@ -236,7 +260,6 @@ async function injectExtension() {
   shufflerBtn = wrapper.firstElementChild.firstElementChild;
   shufflerBtn.onclick = () => {
     if (!isExtensionEnabled) return;
-    sendMessage('Shuffler:');
     cmdShuffle();
   };
 
