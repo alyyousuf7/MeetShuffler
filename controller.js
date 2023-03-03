@@ -4,17 +4,12 @@ const SHUFFLER_ON_IDENTIFIER = '﻿';
 const SHUFFLER_OFF_IDENTIFIER = '­';
 
 const SELECTORS = {
-  toolbar: ".SGP0hd.kunNie",
-  endpage: "[jscontroller=VQ0pCb]",
-  endpageButtons: "[jscontroller=VQ0pCb] [jsname=c6xFrd]",
+  toolbar: ".jsNRx .tMdQNe",
   panelButtons: "[jsname=A5il2e]",
   sidePanel: "[jscontroller=ZUdl0b]",
-  sidePanelCloseButton: "[jscontroller=ZUdl0b] button[jscontroller=soHxf]",
-  meetingAttendeeCount: "[jscontroller=SKibOb] .uGOf1d",
   participantsPanel: "[jsname=jrQDbd]",
   participants: "[jsname=jrQDbd] .zSX24d span:nth-child(1)",
   chatPanel: ".z38b6",
-  additionalTriggersToCloseFellow: ["[jsname=wcuPXe]", "[jsname=AawL4c]", "[jsname=N46fgb]", "[jsname=dq27Te]", "[jsname=om6yRe]", "[jsname=tj5XFb]", "[jsname=flyCmf]"].join(", "),
 };
 
 const shufflerButtonWrapperClass = "r6xAKc";
