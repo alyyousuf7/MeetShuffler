@@ -58,6 +58,10 @@ function sendMessage(...msg) {
 
   inputField.focus();
   inputField.value = msg.join('');
+  inputField.dispatchEvent(new Event('input', {
+    bubbles: true,
+    cancelable: true,
+  }));
   pressEnter(inputField);
 }
 
