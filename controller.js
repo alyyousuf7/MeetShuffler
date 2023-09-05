@@ -8,7 +8,7 @@ const SELECTORS = {
   panelButtons: "[jsname=A5il2e]",
   sidePanel: "[jscontroller=ZUdl0b]",
   participantsPanel: "[jsname=jrQDbd]",
-  participants: "[jsname=jrQDbd] .zSX24d span:nth-child(1)",
+  participants: "[jsname=jrQDbd] .zSX24d .zWGUib",
   chatPanel: ".z38b6",
 };
 
